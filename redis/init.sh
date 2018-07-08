@@ -9,8 +9,7 @@ sudo mkdir /opt/redis
 cd /opt/redis
 # Use latest stable 下载最新稳定版
 sudo wget -q http://download.redis.io/redis-stable.tar.gz
-# Only update newer files
-sudo tar -xz --keep-newer-files -f redis-stable.tar.gz
+sudo tar zxvf redis-stable.tar.gz
 
 cd redis-stable
 make
