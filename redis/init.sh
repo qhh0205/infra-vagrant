@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 sudo apt-get -y install make
 # 安装 gcc 相关编译工具
 sudo apt-get install -y build-essential
@@ -14,7 +13,6 @@ sudo tar zxvf redis-stable.tar.gz
 cd redis-stable
 make
 sudo make install
-sudo rm /etc/redis.conf
 sudo mkdir -p /etc/redis
 sudo mkdir /var/redis
 sudo chmod -R 777 /var/redis

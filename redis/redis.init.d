@@ -13,14 +13,15 @@
 
 
 PATH=/opt/redis/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+USER=`whoami`
 DAEMON=`which redis-server`
 REDIS_CLI=`which redis-cli`
 CONFIG_FILE=/etc/redis/6379.conf
 DAEMON_ARGS="$CONFIG_FILE"
 NAME=redis-server
 DESC=redis-server
-PIDFILE=/var/redis/6379.pid
-LOGFILE=/var/redis/6379.log
+PIDFILE=/var/redis/redis.pid
+LOGFILE=/var/redis/redis.log
 
 test -x $DAEMON || exit 0
 test -x $DAEMONBOOTSTRAP || exit 0
@@ -31,8 +32,8 @@ case "$1" in
   start)
     echo -n "Starting $DESC: "
     touch $PIDFILE $LOGFILE
-    chown redis:redis $PIDFILE $LOGFILE
-    if start-stop-daemon --start --quiet --umask 007 --pidfile $PIDFILE --chuid redis:redis --exec $DAEMON -- $DAEMON_ARGS
+    chown $USER:$USER $PIDFILE $LOGFILE
+    if start-stop-daemon --start --quiet --umask 007 --chuid $USER:$USER --exec $DAEMON -- $DAEMON_ARGS
     then
         echo "$NAME."
     else
