@@ -12,6 +12,31 @@ http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad
 update-alternatives --install /usr/bin/java java /opt/jdk/jdk1.8.0_181/bin/java 100
 update-alternatives --install /usr/bin/javac javac /opt/jdk/jdk1.8.0_181/bin/javac 100
 
+# ######### Install Docker
+apt-get install -y \
+    linux-image-extra-$(uname -r) \
+    linux-image-extra-virtual
+
+apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+
+curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+
+add-apt-repository \
+    "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu \
+    $(lsb_release -cs) \
+    stable"
+
+apt-get update
+apt-get install -y docker-ce
+service docker start
+groupadd docker
+usermod -aG docker $USER
+
+
 # ######### 安装配置 Supervisor
 apt-get install -y python-pip
 pip install supervisor
