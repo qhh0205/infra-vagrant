@@ -1,5 +1,8 @@
 # !/bin/bash
 
+# ####### install git
+apt-get install -y git
+
 # ######### 安装 jdk
 mkdir /opt/jdk
 wget --no-cookies \
@@ -174,5 +177,10 @@ supervisorctl update
 
 # ##### Jenkins 初始密码
 sh -c 'tail -n +1 -f /var/logs/jenkins/stdout.log | { sed "/.*initialAdminPassword.*/q" && kill $$ ;}'
+
+# #### 生成 Jenkins 和 git 仓库认证的密钥对
+ssh-keygen -t rsa -N "" -f id_rsa
+echo '------------- ssh public key: ---------------------'
+cat ~/.ssh/id_rsa.pub
 
 exit 0
