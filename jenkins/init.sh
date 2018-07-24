@@ -14,7 +14,7 @@ update-alternatives --install /usr/bin/javac javac /opt/jdk/jdk1.8.0_181/bin/jav
 apt-get install -y python-pip
 pip install supervisor
 mkdir /etc/supervisor
-mkdir -m 777 /var/logs/jenkins
+mkdir -p -m 777 /var/logs/jenkins
 
 cat << EOF > /etc/supervisord.conf
 ; Sample supervisor config file.
@@ -172,5 +172,22 @@ supervisord -c /etc/supervisord.conf
 wget -P /opt/jenkins https://mirrors.tuna.tsinghua.edu.cn/jenkins/war-stable/2.121.2/jenkins.war
 cp /vagrant/jenkins_supervisor.conf /etc/supervisor/jenkins.conf
 supervisorctl update
+sleep 20
+# ######## Jenkins 初始化密码(在stdout.log中如下内容之间:xxxxxxxxxxxxxx)
+#*************************************************************
+#*************************************************************
+#*************************************************************
+#
+#Jenkins initial setup is required. An admin user has been created and a password generated.
+#Please use the following password to proceed to installation:
+#
+#xxxxxxxxxxxxxxxxx
+#
+#This may also be found at: /home/vagrant/.jenkins/secrets/initialAdminPassword
+
+#*************************************************************
+#*************************************************************
+#*************************************************************
+cat /var/logs/jenkins/stdout.log
 
 exit 0
