@@ -1,5 +1,4 @@
 # !/bin/bash
-set -e
 
 # ######### 安装 jdk
 mkdir /opt/jdk
