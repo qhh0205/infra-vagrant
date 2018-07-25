@@ -10,7 +10,7 @@ docker run \
   --name jenkins-blueocean \
   --rm \
   -d \
-  -p 7070:7070 \
+  -p 7070:8080 \
   -v jenkins-data:/var/jenkins_home \
   -v /var/run/docker.sock:/var/run/docker.sock \
   jenkinsci/blueocean
