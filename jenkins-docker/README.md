@@ -11,6 +11,8 @@ http://localhost:7070
 
 #### 环境
 **Docker Image**: jenkinsci/blueocean
+
 **OS**:  Ubuntu 14.04 LTS
+
 **Port**: 7070:7070
 
