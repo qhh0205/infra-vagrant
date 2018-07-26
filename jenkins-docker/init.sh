@@ -19,7 +19,7 @@ docker run \
 sh -c 'docker logs -f jenkins-blueocean | { sed "/-->/q" && kill $$ ;}'
 
 echo -e "\033[32m Success: ---------------------------------------------------- \033[0m"
-echo -e "\033[32m Success:     Vagrat Docker Jenkins Started Successfully! \033[0m"
+echo -e "\033[32m Success:     Vagrant Docker Jenkins Started Successfully! \033[0m"
 echo -e "\033[32m Success: ---------------------------------------------------- \033[0m"
 
 exit 0
