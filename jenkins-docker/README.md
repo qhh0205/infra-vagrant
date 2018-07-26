@@ -14,5 +14,5 @@ http://localhost:7070
 
 **OS**:  Ubuntu 14.04 LTS
 
-**Port**: 7070:7070
+**Port**: 7070:8080
 
