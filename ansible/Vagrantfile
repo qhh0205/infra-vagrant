@@ -1,0 +1,113 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+$install_ansible = <<-SCRIPT
+sudo apt-get install software-properties-common
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt-get update
+sudo apt-get install ansible -y
+SCRIPT
+
+$num_nodes = 2
+
+Vagrant.configure("2") do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://vagrantcloud.com/search.
+  #  ansible 主控机定义
+  config.vm.define "ansible" do | ansible |
+    ansible.vm.box = "ubuntu-server-16.04"
+    ansible.vm.hostname = "ansible"
+    ansible.vm.network "private_network", ip: "192.168.10.100"
+    ansible.vm.provider "virtualbox" do | v |
+      v.name = "ansible"
+      v.memory = "1024"
+      v.cpus = 1
+    end
+    ansible.vm.provision "shell", inline: $install_ansible
+    ansible.vm.provision "shell", inline: "echo '192.168.10.100 ansible' >> /etc/hosts"
+    ansible.vm.provision "shell", inline: "echo '192.168.10.101 node1' >> /etc/hosts"
+    ansible.vm.provision "shell", inline: "echo '192.168.10.102 node2' >> /etc/hosts"
+    ansible.vm.provision "shell", privileged: false, inline: "cp -p /vagrant/id_rsa ~/.ssh"
+    ansible.vm.provision "shell", privileged: false, inline: "cp -p /vagrant/id_rsa.pub ~/.ssh"
+  end
+
+  #  被管理节点主机定义(在这里定义2个节点)
+  (1..$num_nodes).each do |i|
+      config.vm.define "node#{i}" do |node|
+        node.vm.box = "ubuntu-server-16.04"
+        node.vm.hostname = "node#{i}"
+        node.vm.network "private_network", ip: "192.168.10.#{i+100}"
+        node.vm.provider "virtualbox" do |v|
+          v.name = "ansible-node#{i}"
+          v.memory = "1024"
+          v.cpus = 1
+        end
+        node.vm.provision "shell", privileged: false, inline: "cat /vagrant/id_rsa.pub >> ~/.ssh/authorized_keys"
+        # 安装 python2：Ubuntu 16.04.3 LTS 默认只安装了 python3，没有安装 python2，否则ansible执行命令时会报错：
+        #"module_stdout": "/bin/sh: 1: /usr/bin/python: not found\r\n"
+        node.vm.provision "shell", inline: "sudo apt-get update && sudo apt-get install python-minimal -y"
+      end
+  end
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  # NOTE: This will enable public access to the opened port
+  # config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine and only allow access
+  # via 127.0.0.1 to disable public access
+  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  # config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  # config.vm.synced_folder "../data", "/vagrant_data"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  # config.vm.provider "virtualbox" do |vb|
+  #   # Display the VirtualBox GUI when booting the machine
+  #   vb.gui = true
+  #
+  #   # Customize the amount of memory on the VM:
+  #   vb.memory = "1024"
+  # end
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # Enable provisioning with a shell script. Additional provisioners such as
+  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
+  # documentation for more information about their specific syntax and use.
+  # config.vm.provision "shell", inline: <<-SHELL
+  #   apt-get update
+  #   apt-get install -y apache2
+  # SHELL
+end
